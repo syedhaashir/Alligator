@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CXRTNet</title>
+  <link rel="stylesheet" href="style-demo.css">
+  <!-- Fontawesome Link for Icons -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+</head>
+
+<body>
+  <header>
+    <nav class="navbar">
+      <h3 style="color: white; margin-left: 3px; font-size: 25px;"> CXRTNet </h3>
+      <!-- <a href="#" class="logo" ><img src="" alt="Logo"></a> -->
+      
+      <input type="checkbox" id="menu-toggler">
+      <label for="menu-toggler" id="hamburger-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+          <path d="M0 0h24v24H0z" fill="none" />
+          <path d="M3 18h18v-2H3v2zm0-5h18V11H3v2zm0-7v2h18V6H3z" />
+        </svg>
+      </label>
+      <ul class="all-links">
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./index.html">Contact Us</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="homepage" id="home">
+    <div class="content">
+
+      <div class="button-container">
+        <button onclick="toggleSingleFileModal()">Upload Single File</button>
+        <button onclick="toggleMultipleFilesModal()">Upload Multiple Files</button>
+      </div>
+
+      <div id="response"></div>
+      <div id="singleFileModal" class="modal">
+        <span class="close" onclick="toggleSingleFileModal()">&times;</span>
+        <form id="singleFileForm" method="post" enctype="multipart/form-data">
+          <input type="file" name="files" accept="image/*">
+          <input type="button" value="Upload" onclick="submitSingleFile()">
+        </form>
+      </div>
+
+      <div id="multipleFilesModal" class="modal">
+        <span class="close" onclick="toggleMultipleFilesModal()">&times;</span>
+        <form id="multipleFilesForm" method="post" enctype="multipart/form-data">
+          <input type="file" name="files" accept="image/*" multiple>
+          <input type="button" value="Upload" onclick="submitMultipleFiles()">
+        </form>
+      </div>
+
+      <script>
+        var popupWindow;
+      
+        function toggleSingleFileModal() {
+          var modal = document.getElementById("singleFileModal");
+          modal.style.display = modal.style.display === "block" ? "none" : "block";
+        }
+      
+        function toggleMultipleFilesModal() {
+          var modal = document.getElementById("multipleFilesModal");
+          modal.style.display = modal.style.display === "block" ? "none" : "block";
+        }
+      
+        function submitSingleFile() {
+          var formData = new FormData(document.getElementById("singleFileForm"));
+          sendFileToServer(formData);
+        }
+      
+        function submitMultipleFiles() {
+          var formData = new FormData(document.getElementById("multipleFilesForm"));
+          sendFilesToServer(formData, true);
+        }
+      
+        function sendFileToServer(formData) {
+          $.ajax({
+            url: 'http://127.0.0.1:5001/process_files',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+              if (response.files.length > 0) {
+                var imageUrl = 'http://127.0.0.1:5001/' + response.files[0];
+                openPopupWindow([imageUrl]);
+              } else {
+                // Handle case when no files are processed
+                document.getElementById("response").innerHTML = '<p>No files processed.</p>';
+              }
+            },
+            error: function (error) {
+              console.log(error);
+            }
+          });
+        }
+      
+        function sendFilesToServer(formData, isMultiple) {
+          $.ajax({
+            url: 'http://127.0.0.1:5001/process_files',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+              if (response.files.length > 0) {
+                var imageUrls = response.files.map(function (filePath) {
+                  return 'http://127.0.0.1:5001/' + filePath;
+                });
+                openPopupWindow(imageUrls);
+              } else {
+                // Handle case when no files are processed
+                document.getElementById("response").innerHTML = '<p>No files processed.</p>';
+              }
+            },
+            error: function (error) {
+              console.log(error);
+            }
+          });
+        }
+      
+        function openPopupWindow(imageUrls) {
+          // Ensure the previous popup is closed
+          if (popupWindow && !popupWindow.closed) {
+            popupWindow.close();
+          }
+      
+          // Open a new small popup window with clickable links
+          popupWindow = window.open('', 'Image Popup', 'width=600,height=400');
+      
+          // Add links to the new window
+          if (imageUrls.length > 0) {
+            imageUrls.forEach(function (imageUrl) {
+              popupWindow.document.write('<a href="' + imageUrl + '" target="_blank">' + imageUrl + '</a><br>');
+            });
+          } else {
+            // Handle case no files are processed
+            popupWindow.document.write('<p>No files processed.</p>');
+          }
+        }
+      </script>
+      
+      
+      
+      
+
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      <span>Copyright © 2023 All Rights Reserved</span>
+    </div>
+  </footer>
+
+</body>
+
+</html>
