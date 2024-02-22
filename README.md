@@ -13,7 +13,7 @@ CXRTNet is a chest X-ray and CT scan pathology classification tool that utilizes
 1. Clone the repository:
 
     ```
-    git clone https://github.com//CXRTNet.git
+    git clone https://github.com/syedhaashir/Alligator.git
     ```
 
 2. Install the required dependencies:
