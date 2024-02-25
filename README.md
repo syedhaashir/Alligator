@@ -39,8 +39,5 @@ CXRTNet is a chest X-ray and CT scan pathology classification tool that utilizes
 ## Contributing
 Contributions are welcome! If you'd like to contribute to CXRTNet, please fork the repository and create a new pull request. Additionally, feel free to open an issue for any bug fixes, feature requests, or general feedback.
 
-## License
-This project is licensed under the [MIT License](LICENSE).
-
 ## Acknowledgements
 CXRTNet was inspired by the need for efficient and accurate tools in medical imaging analysis. We would like to thank the open-source community for their invaluable contributions to the field of deep learning and healthcare technology.
